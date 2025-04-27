@@ -1,0 +1,186 @@
+// schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProductStatus {
+  draft
+  active
+  outOfStock
+  archived
+  discontinued
+}
+
+enum VariantStatus {
+  active
+  discontinued
+}
+
+enum DimensionUnit {
+  cm
+  inch
+}
+
+enum WeightUnit {
+  g
+  kg
+  oz
+  lb
+}
+
+enum ShippingClass {
+  light
+  fragile
+  standard
+  fragileHeavy
+}
+
+enum DiscountType {
+  percentage
+  fixed
+}
+
+model Product {
+  id            Int       @id @default(autoincrement())
+  sku           String    @unique
+  barcode       String?
+  slug          String    @unique
+  taxCode       String?
+  title         String
+  subtitle      String?
+  description   String?
+  collection    String
+  categories    String[] // Array of strings
+  tags          String[]
+  features      String[]
+  warranty      Int?
+  warrantyType  String?
+  origin        String?
+  basePrice     Float
+  sellingPrice  Float
+  originalPrice Float?
+  costPrice     Float?
+  hasDiscount   Boolean   @default(false)
+  discount      Discount?
+
+  stock             Int
+  lowStockThreshold Int?
+  moq               Int?
+  allowBackorder    Boolean @default(false)
+  reservedStock     Int?
+
+  status ProductStatus @default(draft)
+
+  mainImage String?
+  gallery   String[] // Array of image URLs
+
+  hasDimension Boolean    @default(false)
+  dimension    Dimension?
+
+  hasVariants Boolean          @default(false)
+  colors      ColorVariant[]
+  sizes       SizeOption[]
+  materials   MaterialOption[]
+  reviews     Review[]
+
+  averageRating Float?
+  reviewCount   Int?
+  viewCount     Int?
+  wishlistCount Int?
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt
+  publishedAt DateTime  @default(now())
+
+  version  Int?
+  metadata Json?
+}
+
+model Discount {
+  discountTitle   String?
+  discountAmount  Float
+  discountType    DiscountType
+  discountEndDate DateTime?
+  product         Product      @relation(fields: [productId], references: [id])
+  productId       Int          @unique
+}
+
+model Dimension {
+  id            Int            @id @default(autoincrement())
+  width         Float?
+  height        Float?
+  depth         Float?
+  dimensionUnit DimensionUnit?
+  weightValue   Float
+  weightUnit    WeightUnit
+  shippingClass ShippingClass
+  product       Product        @relation(fields: [productId], references: [id])
+  productId     Int            @unique
+}
+
+model ColorVariant {
+  id                Int           @id @default(autoincrement())
+  name              String?
+  hexCode           String
+  images            String[]
+  stock             Int
+  lowStockThreshold Int?
+  sku               String?
+  reserved          Int?
+  sold              Int?
+  price             Float?
+  status            VariantStatus
+  product           Product       @relation(fields: [productId], references: [id])
+  productId         Int
+}
+
+model SizeOption {
+  id                Int           @id @default(autoincrement())
+  value             String
+  code              String?
+  images            String[]
+  stock             Int
+  lowStockThreshold Int?
+  reserved          Int?
+  sku               String?
+  sold              Int?
+  price             Float?
+  status            VariantStatus
+  weightAdjustment  Float?
+  product           Product       @relation(fields: [productId], references: [id])
+  productId         Int
+}
+
+model MaterialOption {
+  id                Int           @id @default(autoincrement())
+  name              String
+  code              String?
+  isRecyclable      String?
+  images            String[]
+  stock             Int
+  lowStockThreshold Int?
+  reserved          Int?
+  sku               String?
+  sold              Int?
+  price             Float?
+  status            VariantStatus
+  product           Product       @relation(fields: [productId], references: [id])
+  productId         Int
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  message   String
+  images    String[]
+  rating    Int
+  product   Product  @relation(fields: [productId], references: [id])
+  productId Int
+  createdAt DateTime @default(now())
+}
