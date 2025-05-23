@@ -26,12 +26,41 @@ export const ProductSchema = z.object({
   costPrice: z.coerce.number().optional(),
 
   hasDiscount: z.boolean().default(false),
-  discount: z.object({
+  discount: z
+  .object({
     discountTitle: z.string().optional(),
-    discountAmount: z.coerce.number(),
-    discountType: z.enum(["percentage", "fixed"]),
-    discountEndDate: z.date().optional().refine(date => !date || date > new Date(), { message: "End date must be in the future" }),
-  }).optional(),
+    discountAmount: z.coerce.number().optional(),
+    discountType: z.enum(["percentage", "fixed"]).optional(),
+    discountEndDate: z
+      .date()
+      .optional()
+      .refine(
+        (date) => !date || date > new Date(),
+        { message: "End date must be in the future" }
+      ),
+  })
+  .optional()
+  .superRefine((val, ctx) => {
+    const hasAmount = val?.discountAmount !== undefined;
+    const hasType = val?.discountType !== undefined;
+
+    if ((hasAmount && !hasType) || (!hasAmount && hasType)) {
+      if (!hasAmount) {
+        ctx.addIssue({
+          path: ["discountAmount"],
+          code: z.ZodIssueCode.custom,
+          message: "Discount amount is required when type is provided",
+        });
+      }
+      if (!hasType) {
+        ctx.addIssue({
+          path: ["discountType"],
+          code: z.ZodIssueCode.custom,
+          message: "Discount type is required when amount is provided",
+        });
+      }
+    }
+  }),
 
   stock: z.coerce.number().min(1, {message: "stock must be at least 1"}),
   lowStockThreshold: z.coerce.number().optional(),
@@ -39,13 +68,15 @@ export const ProductSchema = z.object({
   allowBackorder: z.boolean().default(false),
   status: z.enum(["draft", "active", "outOfStock", "archived", "discontinued"]),
 
-  mainImage: z.union([z.string().url(), z.literal("")]).optional(),
+  mainImage: z.union([z.any(), z.literal("")]).optional(),
   gallery: z.array(z.string()).optional(),
 
   hasDimension: z.boolean().default(false),
   dimension: z.object({
-    width: z.coerce.number().optional(),
-    height: z.coerce.number().optional(),
+    width: z.coerce.number({message: "width is required for shipping!"}),
+    height: z.coerce.number({message: "height is required for shipping!"}),
+    length: z.coerce.number({message: "length is required for shipping!"}),
+    breadth: z.coerce.number({message: "breadth is required for shipping!"}),
     depth: z.coerce.number().optional(),
     dimensionUnit: z.enum(["cm", "inch"]).default("cm"),
     weightValue: z.coerce.number().min(0.1, { message: "Weight must be at least 0.1" }),
@@ -60,7 +91,7 @@ export const ProductSchema = z.object({
   colors: z.array(z.object({
     name: z.string().min(3, { message: "al least 3 letter are required!"}).optional(),
     hexCode: z.string().min(4, { message: "Hax code is required!"}),
-    images: z.array(z.string().url()).optional(),
+    images: z.array(z.any()).optional(),
     stock: z.coerce.number().min(1, {message: "Stock must be at least 1"}),
     lowStockThreshold: z.coerce.number().optional(),
     sku: z.string().optional(),
@@ -71,7 +102,7 @@ export const ProductSchema = z.object({
   sizes: z.array(z.object({
     value: z.string().min(1, { message : "sizes are required!"}),
     code: z.string().optional(),
-    images: z.array(z.string().url()).optional(),
+    images: z.array(z.any()).optional(),
     stock: z.coerce.number().min(1, {message: "stock must be at least 1"}),
     lowStockThreshold: z.coerce.number().optional(),
     price: z.coerce.number().optional(),
@@ -83,7 +114,7 @@ export const ProductSchema = z.object({
   materials: z.array(z.object({
     name: z.string().min(3, { message : "Material name is required!"}),
     code: z.string().optional(),
-    images: z.array(z.string().url()).optional(),
+    images: z.array(z.any()).optional(),
     price: z.coerce.number().optional(),
     isRecyclable: z.string().optional(),
     origin: z.string().optional(),
@@ -101,5 +132,3 @@ export const ProductSchema = z.object({
     version: z.coerce.number().optional(),
     metadata: z.record(z.any()).optional()
 });
-
-

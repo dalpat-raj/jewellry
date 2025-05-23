@@ -4,15 +4,24 @@ import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, Save, Scan } from "lucide-react";
 
 import Link from "next/link";
-import LoaderSpinner from "@/components/layout/loading/LoaderSpinner";
-import ButtonWithSpinner from "@/components/layout/loading/ButtonWithSpinner";
-import { InfinitySpin, Oval } from "react-loader-spinner";
+
 import { cn } from "@/lib/utils";
 
-const Form_Header = ({ isLoading }: { isLoading: boolean }) => {
+const Form_Header = ({
+  isLoading,
+  className,
+}: {
+  isLoading: boolean;
+  className?: string;
+}) => {
   return (
     <>
-      <header className=" flex justify-between gap-4 items-center p-6 max-sm:px-2 max-sm:py-4">
+      <header
+        className={cn(
+          "bg-[var(--white)] shadow-sm flex justify-between gap-4 items-center p-6 max-sm:px-2 max-sm:py-4",
+          className
+        )}
+      >
         <Link href="/dashboard/products" className="flex gap-4 items-center">
           <div>
             <ArrowLeft size={18} />

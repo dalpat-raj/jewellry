@@ -13,8 +13,9 @@ import {
 import { Product } from "@/types/product.types";
 import { Plus, X } from "lucide-react";
 import Image from "next/image";
-import FileUploader from "./FileUploader";
+import FileUploader from "./FileUploders";
 import { useEffect } from "react";
+import { deleteImageFromServer } from "@/lib/deleteImages";
 
 const statusOptions = ["active", "discontinued"];
 const recyclableOptions = ["yes", "no"];
@@ -46,6 +47,10 @@ const ProductVariants = () => {
       setValue("hasVariants", false);
     }
   }, [watch("colors"), watch("sizes"), watch("materials")]);
+
+  const handleImageComplete = (files: { url: string; key: string }[]) => {
+    console.log("Uploaded images preview URLs:", files);
+  };
 
   return (
     <div className="">
@@ -94,6 +99,7 @@ const ProductVariants = () => {
                       <div
                         key={imgIndex}
                         className="relative rounded overflow-hidden border"
+                        style={{ aspectRatio: "1/1" }}
                       >
                         <Image
                           src={img}
@@ -109,17 +115,19 @@ const ProductVariants = () => {
                         />
                         <button
                           type="button"
-                          onClick={() => {
+                          onClick={async () => {
                             const updated = [
                               ...(watch(
                                 `colors.${index}.images` as `colors.${number}.images`
                               ) || []),
                             ];
+                            const deletedImage = updated[imgIndex];
                             updated.splice(imgIndex, 1);
                             setValue(
                               `colors.${index}.images` as `colors.${number}.images`,
                               updated
                             );
+                            await deleteImageFromServer(deletedImage);
                           }}
                           className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
                         >
@@ -129,21 +137,9 @@ const ProductVariants = () => {
                     ))}
 
                     <FileUploader
-                      onComplete={(files) => {
-                        const currentImages =
-                          watch(
-                            `colors.${index}.images` as `colors.${number}.images`
-                          ) || [];
-                        const newImages = [
-                          ...currentImages,
-                          ...files.map((f) => f.url),
-                        ];
-
-                        setValue(
-                          `colors.${index}.images` as `colors.${number}.images`,
-                          newImages
-                        );
-                      }}
+                      onComplete={handleImageComplete}
+                      index={index}
+                      varientTypes="colors"
                       multiple={true}
                     />
                   </div>
@@ -291,10 +287,10 @@ const ProductVariants = () => {
                 </div>
               </div>
               <button
-                className="absolute -top-0 -right-0 px-2 rounded-sm bg-red-200 dark:bg-red-400 cursor-pointer border border-black"
+                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
                 onClick={() => colorField.remove(index)}
               >
-                Remove
+                <X size={16} />
               </button>
             </div>
           ))}
@@ -345,6 +341,7 @@ const ProductVariants = () => {
                       <div
                         key={imgIndex}
                         className="relative rounded overflow-hidden border"
+                        style={{ aspectRatio: "1/1" }}
                       >
                         <Image
                           src={img}
@@ -360,17 +357,19 @@ const ProductVariants = () => {
                         />
                         <button
                           type="button"
-                          onClick={() => {
+                          onClick={async () => {
                             const updated = [
                               ...(watch(
                                 `sizes.${index}.images` as `sizes.${number}.images`
                               ) || []),
                             ];
+                            const deletedImage = updated[imgIndex];
                             updated.splice(imgIndex, 1);
                             setValue(
                               `sizes.${index}.images` as `sizes.${number}.images`,
                               updated
                             );
+                            await deleteImageFromServer(deletedImage);
                           }}
                           className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
                         >
@@ -380,21 +379,9 @@ const ProductVariants = () => {
                     ))}
 
                     <FileUploader
-                      onComplete={(files) => {
-                        const currentImages =
-                          watch(
-                            `sizes.${index}.images` as `sizes.${number}.images`
-                          ) || [];
-                        const newImages = [
-                          ...currentImages,
-                          ...files.map((f) => f.url),
-                        ];
-
-                        setValue(
-                          `sizes.${index}.images` as `sizes.${number}.images`,
-                          newImages
-                        );
-                      }}
+                      onComplete={handleImageComplete}
+                      index={index}
+                      varientTypes="sizes"
                       multiple={true}
                     />
                   </div>
@@ -532,10 +519,10 @@ const ProductVariants = () => {
                 </div>
               </div>
               <button
-                className="absolute -top-0 -right-0 px-2 rounded-sm bg-red-200 dark:bg-red-400 cursor-pointer border border-black"
+                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 cursor-pointer"
                 onClick={() => sizeField.remove(index)}
               >
-                Remove
+                <X size={16} />
               </button>
             </div>
           ))}
@@ -586,6 +573,7 @@ const ProductVariants = () => {
                       <div
                         key={imgIndex}
                         className="relative rounded overflow-hidden border"
+                        style={{ aspectRatio: "1/1" }}
                       >
                         <Image
                           src={img}
@@ -601,17 +589,19 @@ const ProductVariants = () => {
                         />
                         <button
                           type="button"
-                          onClick={() => {
+                          onClick={async () => {
                             const updated = [
                               ...(watch(
                                 `materials.${index}.images` as `materials.${number}.images`
                               ) || []),
                             ];
+                            const deletedImage = updated[imgIndex];
                             updated.splice(imgIndex, 1);
                             setValue(
                               `materials.${index}.images` as `materials.${number}.images`,
                               updated
                             );
+                            await deleteImageFromServer(deletedImage);
                           }}
                           className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
                         >
@@ -621,21 +611,9 @@ const ProductVariants = () => {
                     ))}
 
                     <FileUploader
-                      onComplete={(files) => {
-                        const currentImages =
-                          watch(
-                            `materials.${index}.images` as `materials.${number}.images`
-                          ) || [];
-                        const newImages = [
-                          ...currentImages,
-                          ...files.map((f) => f.url),
-                        ];
-
-                        setValue(
-                          `materials.${index}.images` as `materials.${number}.images`,
-                          newImages
-                        );
-                      }}
+                      onComplete={handleImageComplete}
+                      index={index}
+                      varientTypes="materials"
                       multiple={true}
                     />
                   </div>
@@ -796,10 +774,10 @@ const ProductVariants = () => {
                 </div>
               </div>
               <button
-                className="absolute -top-0 -right-0 px-2 rounded-sm bg-red-200 dark:bg-red-400 cursor-pointer border border-gray-400"
+                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 cursor-pointer"
                 onClick={() => materialField.remove(index)}
               >
-                Remove
+                <X size={16} />
               </button>
             </div>
           ))}

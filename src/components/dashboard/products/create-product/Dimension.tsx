@@ -54,9 +54,7 @@ const Dimension = () => {
         <div className="p-4">
           <div className="flex justify-between gap-4 mb-4">
             <div className="w-full flex flex-col gap-2">
-              <Label htmlFor="width">
-                Width<span className="text-[var(--h-text-gray)]">Optional</span>
-              </Label>
+              <Label htmlFor="width">Width</Label>
               <Input
                 {...register("dimension.width")}
                 id="width"
@@ -71,10 +69,7 @@ const Dimension = () => {
               )}
             </div>
             <div className="w-full flex flex-col gap-2">
-              <Label htmlFor="height">
-                Height
-                <span className="text-[var(--h-text-gray)]">Optional</span>
-              </Label>
+              <Label htmlFor="height">Height</Label>
               <Input
                 {...register("dimension.height")}
                 id="height"
@@ -88,9 +83,39 @@ const Dimension = () => {
                 </span>
               )}
             </div>
+            <div className="w-full flex flex-col gap-2">
+              <Label htmlFor="length">Length</Label>
+              <Input
+                {...register("dimension.length")}
+                id="lenght"
+                type="number"
+                value={watch("dimension.length")}
+                aria-invalid={errors?.dimension?.length ? true : false}
+              />
+              {errors?.dimension?.length && (
+                <span className="text-[12px] text-red-600">
+                  {errors?.dimension.length?.message}
+                </span>
+              )}
+            </div>
           </div>
 
           <div className=" flex justify-between gap-4 mb-4">
+            <div className="w-[70%] flex flex-col gap-2">
+              <Label htmlFor="bre">Breadth</Label>
+              <Input
+                {...register("dimension.breadth")}
+                id="bre"
+                type="number"
+                value={watch("dimension.breadth")}
+                aria-invalid={errors?.dimension?.breadth ? true : false}
+              />
+              {errors?.dimension?.breadth && (
+                <span className="text-[12px] text-red-600">
+                  {errors?.dimension?.breadth?.message}
+                </span>
+              )}
+            </div>
             <div className="w-[70%] flex flex-col gap-2">
               <Label htmlFor="dept">
                 Dept<span className="text-[var(--h-text-gray)]">Optional</span>

@@ -2,9 +2,9 @@ import React from "react";
 import { Identification, BasicInfo, MoreInfo } from "./Basic_Info";
 import { Discount, Inventory, Pricing } from "./Pricing";
 import { Accordion } from "@/components/ui/accordion-form";
-import VariantStep from "./Variants";
 import Dimension from "./Dimension";
-import { GalleryImages, MainImage } from "./Media";
+import { MainImage, GalleryImages } from "./Media";
+import ProductVariants from "./Variants";
 
 const ChildComponents = () => {
   return (
@@ -28,7 +28,7 @@ const ChildComponents = () => {
       </div>
 
       <div className="col-span-3 max-md:col-span-3 flex flex-col gap-4">
-        <VariantStep />
+        <ProductVariants />
       </div>
     </Accordion>
   );

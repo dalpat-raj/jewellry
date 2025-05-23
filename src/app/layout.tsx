@@ -3,9 +3,6 @@ import "./globals.css";
 import Navbar from "@/components/layout/navbar/Navbar";
 import { nunito, nunitoSans } from "@/lib/fonts";
 import Footer from "@/components/layout/footer/Footer";
-import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
-import { extractRouterConfig } from "uploadthing/server";
-import { ourFileRouter } from "@/app/api/uploadthing/core";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -22,10 +19,9 @@ export default function RootLayout({
       <body
         className={`${nunito.className} ${nunitoSans.className} antialiased`}
       >
-        <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
-        {/* <Navbar /> */}
+        <Navbar />
         {children}
-        {/* <Footer /> */}
+        <Footer />
       </body>
     </html>
   );

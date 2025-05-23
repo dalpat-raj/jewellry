@@ -1,7 +1,7 @@
 
 export const formatTitle = (title: string) => {
 return title
-    .toLowerCase()
+    ?.toLowerCase()
     .replace(/ /g, '-')
     .replace(/[^\w-]+/g, ''); 
 };

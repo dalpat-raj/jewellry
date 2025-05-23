@@ -3,12 +3,12 @@ import { db } from "@/lib/db";
 import { ProductSchema } from "@/schema";
 import { Product } from "@/types/product.types";
 import { revalidatePath } from "next/cache";
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 
 
 export async function CreateProduct(formData: Product) {
-    console.log(formData);
     
   try {
     const {sku, barcode, slug, taxCode, title, subtitle, description, collection, categories, tags, features, warranty, warrantyType, origin, basePrice, sellingPrice, originalPrice, costPrice, hasDiscount, discount, stock, lowStockThreshold, moq, allowBackorder, status, mainImage, gallery, hasDimension, dimension, hasVariants, colors, sizes, materials, } = ProductSchema.parse(formData);
@@ -54,6 +54,8 @@ export async function CreateProduct(formData: Product) {
                 create: {
                     width: dimension.width,
                     height: dimension.height,
+                    length: dimension.length,
+                    breadth: dimension.breadth,
                     depth: dimension.depth,
                     dimensionUnit: dimension.dimensionUnit ?? "in",
                     weightValue: dimension.weightValue,
@@ -114,18 +116,24 @@ export async function CreateProduct(formData: Product) {
           },
     
     })
-    console.log(product);
     
-    // revalidatePath("/dashboard/products/create-product");
+    revalidatePath("/dashboard/products/create-product");
 
     return { success: "Product Created ✅" };
   } catch (error: any) {
-    console.error(error);
-
+    console.error("🔥 Prisma Error:", error);
     if (error instanceof z.ZodError) {
-      return { error: error.errors[0]?.message || "Validation error" };
+      return { error: error.errors[0]?.message || "Invalid input" };
     }
 
-    return { error: "Database error" };
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      const target = error.meta?.target?.toString() || "Unique field";
+      return { error: `${target} already exists.` };
+    }
+
+    return { error: "Something went wrong. Please try again." };
   }
   }

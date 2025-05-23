@@ -147,7 +147,7 @@ export function Discount() {
   const discountType = watch("discount.discountType");
 
   useEffect(() => {
-    if (discountType || discountAmount) {
+    if (discountType && discountAmount) {
       setValue("hasDiscount", true);
     } else {
       setValue("hasDiscount", false);
@@ -199,7 +199,7 @@ export function Discount() {
                       <SelectValue placeholder="Select type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="%">%</SelectItem>
+                      <SelectItem value="percentage">Percentage</SelectItem>
                       <SelectItem value="fixed">Fixed</SelectItem>
                     </SelectContent>
                   </Select>

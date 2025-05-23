@@ -1,6 +1,6 @@
 "use client";
 import React, { useTransition } from "react";
-import { FormProvider, SubmitHandler } from "react-hook-form";
+import { FormProvider } from "react-hook-form";
 import { useProductForm } from "@/hooks/useProductForm";
 import { Product } from "@/types/product.types";
 import Form_Header from "./Form-Header";
@@ -32,7 +32,7 @@ const ProductForm = () => {
     <div className={cn("w-full mx-auto")}>
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
-          <Form_Header isLoading={isLoading} />
+          <Form_Header isLoading={isLoading} className="sticky top-0 z-50 " />
           <ChildComponents />
         </form>
       </FormProvider>

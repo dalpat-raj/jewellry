@@ -1,4 +1,5 @@
 type ColorVariant = {
+  id: number;
   name?: string;          
   hexCode: string;      
   images?: string[];    
@@ -12,6 +13,7 @@ type ColorVariant = {
 }
 
 type SizeOption = {
+  id: number;
   value: string;        
   code?: string; 
   images?: string[];    
@@ -26,6 +28,7 @@ type SizeOption = {
 };
 
 type MaterialOption = {
+  id: number;
   name: string;         
   code?: string;         
   isRecyclable?: string;
@@ -40,8 +43,10 @@ type MaterialOption = {
 };
 
 type Dimension = {
-  width?: number;       
-  height?: number;
+  width: number;       
+  height: number;
+  length: number;
+  breadth: number;
   depth?: number;
   dimensionUnit?: "cm" | "inch";  
   weightValue: number;
@@ -51,13 +56,14 @@ type Dimension = {
 
 type Discount = {
   discountTitle?: string;
-  discountAmount: number;
-  discountType: "percentage" | "fixed",
+  discountAmount?: number | undefined;
+  discountType?: "percentage" | "fixed",
   discountEndDate?: Date,
 }
 
 
 export type Product = {
+  id: number;
   sku: string;           
   barcode?: string;    
   slug: string;  
@@ -92,7 +98,7 @@ export type Product = {
   gallery?: string[];  
 
   hasDimension?: boolean;
-  dimension: Dimension;   
+  dimension?: Dimension;   
 
   hasVariants?: boolean;  
   colors?: ColorVariant[];
